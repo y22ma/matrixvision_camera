@@ -1,29 +1,34 @@
-cmake_minimum_required(VERSION 2.4.6)
-include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
+cmake_minimum_required(VERSION 2.8.3)
+project(mv_camera)
 
-# Set the build type.  Options are:
-#  Coverage       : w/ debug symbols, w/o optimization, w/ code-coverage
-#  Debug          : w/ debug symbols, w/o optimization
-#  Release        : w/o debug symbols, w/ optimization
-#  RelWithDebInfo : w/ debug symbols, w/ optimization
-#  MinSizeRel     : w/o debug symbols, w/ optimization, stripped binaries
-#set(ROS_BUILD_TYPE RelWithDebInfo)
+find_package(
+    catkin REQUIRED COMPONENTS
+    tf roscpp camera_info_manager driver_base dynamic_reconfigure image_transport 
+    nodelet message_generation
+)
 
-rosbuild_init()
+catkin_package(
+  INCLUDE_DIRS include
+  LIBRARIES mv_camera_driver mv_camera_nodelet 
+  CATKIN_DEPENDS tf roscpp camera_info_manager driver_base dynamic_reconfigure image_transport 
+    nodelet message_runtime
+  DEPENDS system_lib
+)
 
-set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
-set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
-rosbuild_gensrv() #temporarily don't build service until const string bug is fixed
-rosbuild_genmsg()
+## Generate services in the 'srv' folder
+add_service_files(
+  FILES
+  PropertyMap.srv
+)
 
-# auto-generated dynamic reconfiguration GUI
-rosbuild_find_ros_package(dynamic_reconfigure)
-include(${dynamic_reconfigure_PACKAGE_PATH}/cmake/cfgbuild.cmake)
-gencfg()
+## Generate added messages and services with any dependencies listed here
+generate_messages()
 
-add_definitions(-DGENICAM_CACHE_V2_3='"${PROJECT_SOURCE_DIR}/genicam_cache"')
 
+include_directories(include)
+include_directories(${catkin_INCLUDE_DIRS})
+link_libraries(${catkin_LIBRARIES})
 
 # common source files for both node and nodelet driver interfaces
 set(DRIVER_SOURCES 
@@ -31,20 +36,12 @@ set(DRIVER_SOURCES
   src/dev_mv_camera.cpp
   src/features.cpp
   src/formats.cpp
-  )
+)
+add_executable(mv_camera_interface src/driver_interface_node.cpp)
+add_library(mv_camera_driver ${DRIVER_SOURCES})
 
-
-rosbuild_add_executable(mv_camera_interface src/driver_interface_node.cpp)
-
-rosbuild_add_library(mv_camera_driver ${DRIVER_SOURCES})
-
-rosbuild_add_executable(mv_camera_node src/mv_camera_node.cpp )
+add_executable(mv_camera_node src/mv_camera_node.cpp )
 target_link_libraries(mv_camera_node  mv_camera_driver)
 
-rosbuild_add_library(mv_camera_nodelet src/mv_camera_nodelet.cpp)
+add_library(mv_camera_nodelet src/mv_camera_nodelet.cpp)
 target_link_libraries(mv_camera_nodelet mv_camera_driver)
-
-set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
-set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
-
-

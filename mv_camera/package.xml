@@ -1,0 +1,32 @@
+<package>
+  <name>mv_camera</name>
+  <version>0.0.0</version>
+  <description>The mv_camera package for matrix vision usb cameras</description>
+  <maintainer email="yanma@clearpathrobotics.com">yanma</maintainer>
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>tf</build_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>camera_info_manager</build_depend>
+  <build_depend>driver_base</build_depend>
+  <build_depend>dynamic_reconfigure</build_depend>
+  <build_depend>image_transport</build_depend>
+  <build_depend>nodelet</build_depend>
+  <build_depend>message_generation</build_depend>
+
+  <run_depend>tf</run_depend>
+  <run_depend>roscpp</run_depend>
+  <run_depend>camera_info_manager</run_depend>
+  <run_depend>driver_base</run_depend>
+  <run_depend>dynamic_reconfigure</run_depend>
+  <run_depend>image_transport</run_depend>
+  <run_depend>nodelet</run_depend>
+  <run_depend>message_runtime</run_depend>
+  
+  <export>
+    <nodelet plugin="${prefix}/mv_camera_nodelet.xml"/>
+  </export>
+</package>
+
+
