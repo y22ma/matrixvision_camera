@@ -7,15 +7,6 @@ find_package(
     nodelet message_generation
 )
 
-catkin_package(
-  INCLUDE_DIRS include
-  LIBRARIES mv_camera_driver mv_camera_nodelet 
-  CATKIN_DEPENDS tf roscpp camera_info_manager driver_base dynamic_reconfigure image_transport 
-    nodelet message_runtime
-  DEPENDS system_lib
-)
-
-
 ## Generate services in the 'srv' folder
 add_service_files(
   FILES
@@ -24,11 +15,21 @@ add_service_files(
 
 ## Generate added messages and services with any dependencies listed here
 generate_messages()
+generate_dynamic_reconfigure_options(
+  cfg/mv_camera.cfg
+)
 
+catkin_package(
+  LIBRARIES mv_camera_driver mv_camera_nodelet 
+  CATKIN_DEPENDS tf roscpp camera_info_manager driver_base dynamic_reconfigure image_transport 
+    nodelet message_runtime
+  DEPENDS system_lib
+)
 
-include_directories(include)
-include_directories(${catkin_INCLUDE_DIRS})
-link_libraries(${catkin_LIBRARIES})
+# make sure configure headers are built before any node using them
+include_directories(${catkin_INCLUDE_DIRS} /opt/mvIMPACT_acquire)
+file(GLOB MV_LIBS /opt/mvIMPACT_acquire/lib/x86/lib*)
+link_libraries(${catkin_LIBRARIES} ${MV_LIBS})
 
 # common source files for both node and nodelet driver interfaces
 set(DRIVER_SOURCES 
@@ -39,6 +40,7 @@ set(DRIVER_SOURCES
 )
 add_executable(mv_camera_interface src/driver_interface_node.cpp)
 add_library(mv_camera_driver ${DRIVER_SOURCES})
+add_dependencies(mv_camera_driver ${PROJECT_NAME}_gencfg)
 
 add_executable(mv_camera_node src/mv_camera_node.cpp )
 target_link_libraries(mv_camera_node  mv_camera_driver)
