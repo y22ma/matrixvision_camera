@@ -28,7 +28,7 @@ catkin_package(
 
 # make sure configure headers are built before any node using them
 include_directories(${catkin_INCLUDE_DIRS} /opt/mvIMPACT_acquire)
-file(GLOB MV_LIBS /opt/mvIMPACT_acquire/lib/x86/lib*)
+file(GLOB MV_LIBS /opt/mvIMPACT_acquire/lib/x86_64/lib*)
 link_libraries(${catkin_LIBRARIES} ${MV_LIBS})
 
 # common source files for both node and nodelet driver interfaces
@@ -40,7 +40,7 @@ set(DRIVER_SOURCES
 )
 add_executable(mv_camera_interface src/driver_interface_node.cpp)
 add_library(mv_camera_driver ${DRIVER_SOURCES})
-add_dependencies(mv_camera_driver ${PROJECT_NAME}_gencfg)
+add_dependencies(mv_camera_driver ${${PROJECT_NAME}_EXPORTED_TARGETS})
 
 add_executable(mv_camera_node src/mv_camera_node.cpp )
 target_link_libraries(mv_camera_node  mv_camera_driver)
