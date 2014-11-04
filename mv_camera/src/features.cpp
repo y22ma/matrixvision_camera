@@ -103,7 +103,7 @@ bool Features::setFramerate(const double & fps_suggested, double * fps_returned)
   double fps;
 
   // assuming that the BlueCougar runs in free running mode, this might be conservative
-  ROS_INFO("Timing info: px_clock=%f MHz, frametime=%f ms, fps_max=%f ", pixel_clock*1.0e-6, frame_time*1000, fps_max);
+  ROS_INFO("Timing info: px_clock=%f MHz, frametime=%f ms, expose_s %f, fps_max=%f ", pixel_clock*1.0e-6, frame_time*1000, exposure_time, fps_max);
 
   if (fps_suggested > fps_max)
   {

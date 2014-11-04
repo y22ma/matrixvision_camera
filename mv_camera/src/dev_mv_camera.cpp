@@ -357,9 +357,13 @@ void MVCamera::readData(sensor_msgs::Image& image)
   int request_nr;
 
   if (err_cnt < 5)
+  {
     request_nr = cam_fi_->imageRequestWaitFor(timeout_ms);
+  }
   else
+  {
     request_nr = cam_fi_->imageRequestWaitFor(timeout_ms * 5);
+  }
 
   const mvIMPACT::acquire::Request * req;
   ros::Time time_now = ros::Time::now();
